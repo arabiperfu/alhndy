@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowRight, CreditCard, Truck, Shield, Check, MapPin, Phone, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, CreditCard, Truck, Shield, Check, MapPin, Phone, Mail, MessageSquare, Clock, RefreshCw, Printer, Send } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,12 @@ const CheckoutPage: React.FC = () => {
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [smsCode, setSmsCode] = useState('');
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
+  const [codeError, setCodeError] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+  const [transactionDate, setTransactionDate] = useState('');
   
   const [shippingInfo, setShippingInfo] = useState({
     fullName: user?.name || '',
@@ -34,6 +40,31 @@ const CheckoutPage: React.FC = () => {
   const shippingCost = getTotalPrice() >= 100 ? 0 : 15;
   const totalAmount = getTotalPrice() + shippingCost;
 
+  // Generate SMS code when moving to step 3
+  useEffect(() => {
+    if (step === 3) {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedCode(code);
+      setTimeLeft(120);
+      setSmsCode('');
+      setCodeError('');
+    }
+  }, [step]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (step === 3 && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [step, timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStep(2);
@@ -43,44 +74,130 @@ const CheckoutPage: React.FC = () => {
     e.preventDefault();
     setIsProcessing(true);
     
-    // محاكاة معالجة الدفع
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // محاكاة معالجة البطاقة
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsProcessing(false);
+    setStep(3); // الانتقال لخطوة التحقق من الرقم السري
+  };
+
+  const handleSmsVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCodeError('');
+
+    if (smsCode !== generatedCode) {
+      setCodeError('الرقم السري غير صحيح. يرجى المحاولة مرة أخرى.');
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    // محاكاة التحقق النهائي
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // إنشاء معرف المعاملة وتاريخها
+    const txId = 'NH' + Math.random().toString().substr(2, 8);
+    const now = new Date();
+    setTransactionId(txId);
+    setTransactionDate(now.toLocaleString('ar-SA'));
     
     setIsProcessing(false);
     setOrderComplete(true);
     clearCart();
   };
 
+  const handleResendCode = () => {
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedCode(newCode);
+    setTimeLeft(120);
+    setSmsCode('');
+    setCodeError('');
+  };
+
+  const handlePrintReceipt = () => {
+    window.print();
+  };
+
+  const handleEmailReceipt = () => {
+    alert('تم إرسال الإيصال إلى بريدك الإلكتروني بنجاح!');
+  };
+
+  const maskPhoneNumber = (phone: string) => {
+    if (phone.length < 4) return phone;
+    return phone.slice(0, 3) + '***' + phone.slice(-2);
+  };
+
   if (orderComplete) {
     return (
       <div className="min-h-screen bg-gray-50 pt-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center print:shadow-none">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-green-500" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">تم تأكيد طلبك!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">تم تأكيد طلبك بنجاح!</h1>
             <p className="text-xl text-gray-600 mb-8">
               شكراً لك على الطلب. سيتم توصيل طلبك خلال 2-3 أيام عمل.
             </p>
-            <div className="bg-gray-50 rounded-lg p-6 mb-8">
-              <h3 className="font-semibold text-gray-900 mb-4">تفاصيل الطلب</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>رقم الطلب:</span>
-                  <span className="font-mono">#NH{Math.random().toString().substr(2, 8)}</span>
+            
+            {/* تفاصيل المعاملة المحسنة */}
+            <div className="bg-gray-50 rounded-lg p-6 mb-8 text-right">
+              <h3 className="font-bold text-gray-900 mb-6 text-center text-xl">إيصال الدفع</h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="font-semibold text-gray-900">رقم المعاملة:</span>
+                  <span className="font-mono text-lg text-green-600">{transactionId}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>المبلغ الإجمالي:</span>
-                  <span className="font-bold">{totalAmount.toFixed(2)} ر.س</span>
+                
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="font-semibold text-gray-900">حالة الدفع:</span>
+                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    مكتمل ✓
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span>طريقة الدفع:</span>
-                  <span>بطاقة ائتمانية</span>
+                
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="font-semibold text-gray-900">المبلغ الإجمالي:</span>
+                  <span className="font-bold text-xl text-green-600">{totalAmount.toFixed(2)} ر.س</span>
+                </div>
+                
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="font-semibold text-gray-900">طريقة الدفع:</span>
+                  <span>بطاقة ائتمانية ****{paymentInfo.cardNumber.slice(-4)}</span>
+                </div>
+                
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="font-semibold text-gray-900">تاريخ ووقت المعاملة:</span>
+                  <span className="font-mono">{transactionDate}</span>
+                </div>
+                
+                <div className="flex justify-between items-center py-2">
+                  <span className="font-semibold text-gray-900">اسم العميل:</span>
+                  <span>{shippingInfo.fullName}</span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            {/* أزرار الإجراءات */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 print:hidden">
+              <button
+                onClick={handlePrintReceipt}
+                className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors font-semibold flex items-center justify-center gap-2"
+              >
+                <Printer className="w-5 h-5" />
+                طباعة الإيصال
+              </button>
+              <button
+                onClick={handleEmailReceipt}
+                className="flex-1 bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors font-semibold flex items-center justify-center gap-2"
+              >
+                <Send className="w-5 h-5" />
+                إرسال بالإيميل
+              </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 print:hidden">
               <button
                 onClick={() => navigate('/')}
                 className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold"
@@ -157,6 +274,19 @@ const CheckoutPage: React.FC = () => {
                 2
               </div>
               <span className="mr-3 text-sm font-medium">الدفع</span>
+            </div>
+            <div className="w-16 h-1 bg-gray-300 mx-4">
+              <div className={`h-full bg-green-500 transition-all duration-300 ${
+                step >= 3 ? 'w-full' : 'w-0'
+              }`}></div>
+            </div>
+            <div className="flex items-center">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                step >= 3 ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
+              }`}>
+                3
+              </div>
+              <span className="mr-3 text-sm font-medium">التحقق</span>
             </div>
           </div>
         </div>
@@ -426,10 +556,111 @@ const CheckoutPage: React.FC = () => {
                       disabled={isProcessing}
                       className="flex-1 bg-green-500 text-white py-4 rounded-lg hover:bg-green-600 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isProcessing ? 'جاري المعالجة...' : `دفع ${totalAmount.toFixed(2)} ر.س`}
+                      {isProcessing ? 'جاري المعالجة...' : 'متابعة للتحقق'}
                     </button>
                   </div>
                 </form>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="bg-white rounded-2xl shadow-lg p-8">
+                <div className="text-center mb-8">
+                  <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <MessageSquare className="w-10 h-10 text-blue-500" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">الرقم السري المؤقت</h2>
+                  <p className="text-gray-600 leading-relaxed">
+                    عميلنا العزيز، نرجو إدخال الرقم السري المؤقت المرسل برسالة نصية إلى جوالك 
+                    <span className="font-semibold text-gray-900"> {maskPhoneNumber(shippingInfo.phone)} </span>
+                    لإتمام العملية من التاجر حسب التفاصيل التالية
+                  </p>
+                </div>
+
+                {/* عرض الكود للتجربة */}
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">📱</div>
+                    <div>
+                      <h4 className="font-semibold text-yellow-800">للتجربة - الكود المرسل:</h4>
+                      <p className="text-xl font-mono font-bold text-yellow-900">{generatedCode}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSmsVerification} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-4 text-center">
+                      أدخل الرقم السري (6 أرقام)
+                    </label>
+                    <div className="flex justify-center">
+                      <input
+                        type="text"
+                        value={smsCode}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          if (value.length <= 6) {
+                            setSmsCode(value);
+                            setCodeError('');
+                          }
+                        }}
+                        className="w-64 px-6 py-4 text-center text-2xl font-mono border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent tracking-widest"
+                        placeholder="* * * * * *"
+                        maxLength={6}
+                        required
+                      />
+                    </div>
+                    {codeError && (
+                      <p className="text-red-500 text-sm text-center mt-2">{codeError}</p>
+                    )}
+                  </div>
+
+                  {/* Timer */}
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <Clock className="w-5 h-5 text-gray-500" />
+                      <span className={`font-mono text-lg ${timeLeft < 30 ? 'text-red-500' : 'text-gray-600'}`}>
+                        {formatTime(timeLeft)}
+                      </span>
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={handleResendCode}
+                      className="text-green-600 hover:text-green-700 font-medium flex items-center gap-2 mx-auto"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      إعادة إرسال الكود
+                    </button>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setStep(2)}
+                      className="flex-1 border border-gray-300 text-gray-700 py-4 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                    >
+                      العودة
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isProcessing || smsCode.length !== 6}
+                      className="flex-1 bg-black text-white py-4 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isProcessing ? 'جاري التحقق...' : 'تأكيد'}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Security Notice */}
+                <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-gray-500" />
+                    <div className="text-sm text-gray-600">
+                      <p>لأمانك، لا تشارك هذا الرقم مع أي شخص آخر</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
