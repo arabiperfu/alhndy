@@ -179,7 +179,6 @@ const AuthModal: React.FC = () => {
                   const newMode = authMode === 'login' ? 'register' : 'login';
                   closeAuthModal();
                   setTimeout(() => {
-                    const { openAuthModal } = useAuth.getState ? useAuth.getState() : useAuth();
                     openAuthModal(newMode);
                   }, 100);
                 }}
