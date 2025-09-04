@@ -3,7 +3,7 @@ import { X, Eye, EyeOff, User, Mail, Phone, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, authMode, closeAuthModal, login, register } = useAuth();
+  const { isAuthModalOpen, authMode, closeAuthModal, openAuthModal, login, register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
