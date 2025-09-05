@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { categories } from '../data/categories';
 
@@ -15,8 +16,9 @@ const CategorySection: React.FC = () => {
         {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {categories.map((category) => (
-            <div
+            <Link
               key={category.id}
+              to={`/products?category=${category.nameEn}`}
               className="group bg-white rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-green-200"
             >
               <div className="relative mb-4">
@@ -39,15 +41,18 @@ const CategorySection: React.FC = () => {
                 تسوق الآن
                 <ArrowLeft className="w-4 h-4" />
               </button>
-            </div>
+            </Link>
           ))}
         </div>
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <button className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+          <Link 
+            to="/products"
+            className="inline-block bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold"
+          >
             عرض جميع الفئات
-          </button>
+          </Link>
         </div>
       </div>
     </section>
