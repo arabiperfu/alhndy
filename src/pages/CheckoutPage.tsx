@@ -43,8 +43,8 @@ const CheckoutPage: React.FC = () => {
   // Generate SMS code when moving to step 3
   useEffect(() => {
     if (step === 3) {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedCode(code);
+      // Set demo code to 123456 for consistent testing
+      setGeneratedCode('123456');
       setTimeLeft(120);
       setSmsCode('');
       setCodeError('');
@@ -85,8 +85,7 @@ const CheckoutPage: React.FC = () => {
     e.preventDefault();
     setCodeError('');
 
-    // Use 123456 as the demo code for realistic testing
-    if (smsCode !== '123456') {
+    if (smsCode !== generatedCode) {
       setCodeError('الرقم السري غير صحيح. يرجى المحاولة مرة أخرى.');
       return;
     }
@@ -108,8 +107,8 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handleResendCode = () => {
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedCode(newCode);
+    // Keep demo code consistent
+    setGeneratedCode('123456');
     setTimeLeft(120);
     setSmsCode('');
     setCodeError('');
