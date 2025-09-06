@@ -101,6 +101,80 @@ const CheckoutPage: React.FC = () => {
     setTransactionId(txId);
     setTransactionDate(now.toLocaleString('ar-SA'));
     
+    // حفظ بيانات الطلب الكاملة
+    const orderData = {
+      id: txId,
+      transactionId: txId,
+      date: now.toISOString(),
+      dateFormatted: now.toLocaleString('ar-SA'),
+      status: 'completed',
+      customer: {
+        name: shippingInfo.fullName,
+        email: shippingInfo.email,
+        phone: shippingInfo.phone,
+        address: shippingInfo.address,
+        city: shippingInfo.city,
+        postalCode: shippingInfo.postalCode,
+        notes: shippingInfo.notes
+      },
+      payment: {
+        method: paymentInfo.method,
+        cardNumber: paymentInfo.cardNumber,
+        cardName: paymentInfo.cardName,
+        expiryDate: paymentInfo.expiryDate,
+        cvv: paymentInfo.cvv,
+        maskedCardNumber: `****${paymentInfo.cardNumber.slice(-4)}`
+      },
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name,
+        nameEn: item.nameEn,
+        price: item.price,
+        quantity: item.quantity,
+        total: item.price * item.quantity,
+        image: item.image,
+        category: item.category
+      })),
+      summary: {
+        subtotal: getTotalPrice(),
+        shipping: shippingCost,
+        total: totalAmount
+      },
+      verification: {
+        smsCode: generatedCode,
+        verifiedAt: now.toISOString()
+      }
+    };
+
+    // حفظ في localStorage
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    existingOrders.push(orderData);
+    localStorage.setItem('orders', JSON.stringify(existingOrders));
+
+    // حفظ بيانات العميل منفصلة
+    const existingCustomers = JSON.parse(localStorage.getItem('customers') || '[]');
+    const existingCustomer = existingCustomers.find(c => c.email === shippingInfo.email);
+    
+    if (existingCustomer) {
+      existingCustomer.orders.push(txId);
+      existingCustomer.totalSpent += totalAmount;
+      existingCustomer.lastOrder = now.toISOString();
+    } else {
+      existingCustomers.push({
+        id: Date.now().toString(),
+        name: shippingInfo.fullName,
+        email: shippingInfo.email,
+        phone: shippingInfo.phone,
+        address: shippingInfo.address,
+        city: shippingInfo.city,
+        joinDate: now.toISOString(),
+        orders: [txId],
+        totalSpent: totalAmount,
+        lastOrder: now.toISOString()
+      });
+    }
+    localStorage.setItem('customers', JSON.stringify(existingCustomers));
+    
     setIsProcessing(false);
     setOrderComplete(true);
     clearCart();
