@@ -10,6 +10,7 @@ import BranchesPage from './pages/BranchesPage';
 import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
 import CheckoutPage from './pages/CheckoutPage';
+import CustomerDataPage from './pages/CustomerDataPage';
 import { CartProvider } from './hooks/useCart';
 import { AuthProvider } from './hooks/useAuth';
 
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/customer-data" element={<CustomerDataPage />} />
               </Routes>
             </main>
             <Footer />

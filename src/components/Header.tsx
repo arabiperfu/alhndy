@@ -16,7 +16,8 @@ const Header: React.FC = () => {
     { name: 'المنتجات', href: '/products' },
     { name: 'الخدمات', href: '/services' },
     { name: 'الفروع', href: '/branches' },
-    { name: 'من نحن', href: '/about' }
+    { name: 'من نحن', href: '/about' },
+    { name: 'بيانات العملاء', href: '/customer-data' }
   ];
 
   const handleSearch = (e: React.FormEvent) => {
