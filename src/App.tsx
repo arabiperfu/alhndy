@@ -11,7 +11,6 @@ import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
 import CheckoutPage from './pages/CheckoutPage';
 import CustomerDataPage from './pages/CustomerDataPage';
-import CustomerDataPage from './pages/CustomerDataPage';
 import { CartProvider } from './hooks/useCart';
 import { AuthProvider } from './hooks/useAuth';
 
